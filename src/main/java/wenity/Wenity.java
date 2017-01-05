@@ -36,7 +36,9 @@ import java.util.Arrays;
 public class Wenity
 {
 
-    // main method: returns exitCode and optionally creates answer file
+    private String responseFile = Constants.RESPONSE_FILE_NAME;
+
+	// main method: returns exitCode and optionally creates answer file
     public int doIt (String[] args)
     {
         try
@@ -74,10 +76,27 @@ public class Wenity
             // Usage: [-d] module_name module_parameters
             final int argsLength = args.length;
             final int lastArgIdx = argsLength - 1;
-
-            final boolean hasOptionalParam = Constants.PARAM_VERBOSE.equals (args[0]) || Constants.PARAM_INFO.equals (args[0]);  // optional
-
-            final int moduleNameIdx = hasOptionalParam ? 1 : 0;
+            int i = 0;
+            for( ; i < args.length ; i++ ){
+            	if(args[i].startsWith("-")){
+            		switch( args[i] ){
+            		case Constants.PARAM_VERBOSE:
+            			Logger.goDebugMode();
+            			break;
+            		case Constants.PARAM_INFO:
+            			Logger.goInfoMode();
+            			break;
+            		case "-response-file" :
+            			responseFile = args[++i];
+            			break;
+            		default:
+            			Logger.error("Unknow arg: " , args[i]);
+            			System.exit(Constants.EXIT_STATUS_APP_ERROR);
+            		}
+            	} else
+            		break ;
+            }
+            final int moduleNameIdx = i ;
             final String moduleName = args[moduleNameIdx];
 
             final int firstModuleParamIdx = moduleNameIdx + 1;
@@ -130,12 +149,18 @@ public class Wenity
 
     private void writeResponseFile (final String data) throws IOException
     {
+    	if( responseFile.equals("-")){
+    		System.out.println(data);
+    		return ;
+    	}
+    		
+    	
         PrintWriter printWriter = null;
         BufferedWriter bufferedWriter = null;
         FileWriter fileWriter = null;
         try
         {
-            fileWriter = new FileWriter (Constants.RESPONSE_FILE_NAME);
+            fileWriter = new FileWriter (responseFile);
             bufferedWriter = new BufferedWriter (fileWriter);
             printWriter = new PrintWriter (bufferedWriter);
             printWriter.println (data);

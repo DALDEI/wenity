@@ -55,8 +55,8 @@ public class Main
 
     private static void showUsage ()
     {
-        System.out.println (Constants.APP_VERSION);
-        System.out.println ("Usage: [-d] module_name module_parameters");
-        System.out.println ("See documentation for details and examples or visit Wenity on internet at " + Constants.APP_HOME);
+        System.err.println (Constants.APP_VERSION);
+        System.err.println ("Usage: [-d] module_name module_parameters");
+        System.err.println ("See documentation for details and examples or visit Wenity on internet at " + Constants.APP_HOME);
     }
 }

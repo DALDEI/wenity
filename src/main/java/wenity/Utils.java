@@ -62,29 +62,6 @@ public final class Utils
         return stringIterator.hasNext () ? stringIterator.next () : "";
     }
 
-//    public static final String createSimpleStackTrace (final Exception ex)
-//    {
-//        final StringBuilder sb = new StringBuilder (400);
-//        sb.append (ex);
-//
-//        Throwable throwable = ex;
-//        while (throwable.getCause () != null)
-//        {
-//            throwable = throwable.getCause ();
-//            sb.append ("<--");
-//            sb.append (throwable);
-//        }
-//
-//        return sb.toString ();
-//    }
-
-//    public static final void createSimpleStackTraceTest ()
-//    {
-//        System.out.println (createSimpleStackTrace (new Exception ("1:One level")));
-//        System.out.println (createSimpleStackTrace (new Exception ("2:One level", new Exception ("2nd level"))));
-//        System.out.println (createSimpleStackTrace (new Exception ("3:One level", new Exception ("2nd level", new Exception ("3rd level")))));
-//    }
-
 
     /**
      * Returns button captions separated by comma,

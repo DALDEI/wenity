@@ -45,19 +45,19 @@ public final class Logger
 //    public static final void info (final String message)
 //    {
 //        if (_INFO)
-//            System.out.println (message);
+//            System.err.println (message);
 //    }
 
     public static final void debug (final String message)
     {
         if (_DEBUG)
-            System.out.println (message);
+            System.err.println (message);
     }
 
     public static final void debug (final String message, final Object... msgArgs)
     {
         if (_DEBUG)
-            System.out.println (String.format (message, msgArgs));
+            System.err.println (String.format (message, msgArgs));
     }
 
     public static final void error (final String message, final Object... msgArgs)
