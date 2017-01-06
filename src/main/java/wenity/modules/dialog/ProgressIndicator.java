@@ -143,4 +143,11 @@ public class ProgressIndicator extends AWenityModule
 //            mainPanel.setSize(200,300);
         return mainPanel;
     }
+
+
+	@Override
+	public String getModuleDescription() {
+		 return "show progress indicator dialog until the specified file is created";
+
+	}
 }

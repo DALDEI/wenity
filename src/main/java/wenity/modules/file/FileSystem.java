@@ -105,5 +105,10 @@ public class FileSystem extends AWenityModule
         return usableSpaceMb >= Long.parseLong (reqFreeSizeMb) ? Constants.EXIT_STATUS_TRUE_STR : Constants.EXIT_STATUS_FALSE_STR;
     }
 
+	@Override
+	public String getModuleDescription() {
+		return "get file system information";
+	}
+
 
 }

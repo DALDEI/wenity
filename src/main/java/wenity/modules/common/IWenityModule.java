@@ -25,6 +25,7 @@ package wenity.modules.common;
 public interface IWenityModule
 {
     String getModuleName ();
+    String getModuleDescription();
 
     boolean canProcess (final String lowCaseModuleName);
 

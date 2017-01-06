@@ -155,4 +155,10 @@ public class Notifier extends AWenityModule
             throw new Exception ("Unknown notification type:" + notificationType);
         }
     }
+
+
+	@Override
+	public String getModuleDescription() {
+		 return  "show notification in system tray";
+	}
 }

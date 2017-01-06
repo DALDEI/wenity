@@ -26,23 +26,41 @@ import wenity.modules.common.IWenityModule;
 import wenity.modules.common.ModuleRequest;
 import wenity.modules.common.ModuleResponse;
 
+import java.awt.Desktop;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
+import joptsimple.ArgumentAcceptingOptionSpec;
+import joptsimple.OptionParser;
+import joptsimple.OptionSet;
+import lombok.extern.log4j.Log4j2;
+
+
+@Log4j2
 public class Wenity
 {
 
-    private String responseFile = Constants.RESPONSE_FILE_NAME;
+	
+    private String responseFile = null;
 
 	// main method: returns exitCode and optionally creates answer file
     public int doIt (String[] args)
     {
+    	
         try
         {
+        	
+        	
             final ModuleRequest moduleRequest = parseArgs (args);
 
             final IWenityModule module = findModule (moduleRequest.getModuleName ());
@@ -69,55 +87,73 @@ public class Wenity
         }
     }
 
-    private ModuleRequest parseArgs (final String[] args)
+    private ModuleRequest parseArgs (final String[] args) throws IOException, URISyntaxException
     {
-        try
+
+    	OptionParser parser = new OptionParser();
+    	
+    	parser.accepts("debug","Debug level logging");
+    	parser.accepts("info","Info level logging");
+    	ArgumentAcceptingOptionSpec<String> responseOpt =	
+    		parser.accepts("response-file","Resonse file - defaults to stdout").withRequiredArg().ofType(String.class);
+        
+
+    	if(args.length == 0) 
+    		usage(parser,true);
+    	try
         {
-            // Usage: [-d] module_name module_parameters
-            final int argsLength = args.length;
-            final int lastArgIdx = argsLength - 1;
-            int i = 0;
-            for( ; i < args.length ; i++ ){
-            	if(args[i].startsWith("-")){
-            		switch( args[i] ){
-            		case Constants.PARAM_VERBOSE:
-            			Logger.goDebugMode();
-            			break;
-            		case Constants.PARAM_INFO:
-            			Logger.goInfoMode();
-            			break;
-            		case "-response-file" :
-            			responseFile = args[++i];
-            			break;
-            		default:
-            			Logger.error("Unknow arg: " , args[i]);
-            			System.exit(Constants.EXIT_STATUS_APP_ERROR);
-            		}
-            	} else
-            		break ;
-            }
-            final int moduleNameIdx = i ;
-            final String moduleName = args[moduleNameIdx];
-
-            final int firstModuleParamIdx = moduleNameIdx + 1;
-            String[] moduleParams = new String[0]; // assume module with no parameters
-            if (firstModuleParamIdx <= lastArgIdx)
-            {
-                // copy module params, if any
-                moduleParams = Arrays.copyOfRange (args, firstModuleParamIdx, argsLength);
-            }
-
-            Logger.debug ("Processed arguments - module: '%s' parameters: '%s'", moduleName, Arrays.toString (moduleParams));
-
+        	OptionSet opts = parser.parse(args);
+        	if( opts.has("debug"))
+        		Logger.goDebugMode();
+        	if(opts.has("info"))
+        		Logger.goInfoMode();
+        	if(opts.has("help"))
+        		usage(parser,true);
+        	if(opts.has(responseOpt))
+        		this.responseFile = responseOpt.value(opts);
+        	@SuppressWarnings("unchecked")
+			List<String> largs = (List<String>) opts.nonOptionArguments();
+        	largs = new ArrayList<String>(largs);
+        	final String moduleName = largs.remove(0);
+            String[] moduleParams = largs.toArray(new String[0]);
+            
             return new ModuleRequest (moduleName, moduleParams);
         }
         catch (final Exception ex)
         {
-            throw new IllegalArgumentException ("Can't parse program arguments! Reason: " + ex, ex);
+        	mLogger.warn(ex);
+        	usage(parser, false);
         }
+		return null;// snh
     }
 
-    private IWenityModule findModule (String moduleName)
+	private void launchBrowser(String uri) throws IOException, URISyntaxException {
+		if(  uri != null ){
+			Desktop desktop = 
+					Desktop.isDesktopSupported() ? Desktop.getDesktop() : null ; // Avoid exception 
+
+					if( desktop != null ) 
+						desktop.browse(new URI(uri));
+
+		}
+	}
+
+	private void usage(OptionParser parser, boolean showBrowser) throws IOException, URISyntaxException {
+		parser.printHelpOn(System.err);
+		System.err.println("See: "+Constants.APP_DOCS_URL);
+		if( showBrowser ) launchBrowser(Constants.APP_DOCS_URL);
+		
+		System.err.println("\nModules:\n");
+        for (final IWenityModule module : ModuleConfig.getInstalledModules ())
+        {
+        	System.err.println(String.format("%-20s: %s",module.getModuleName(),module.getModuleDescription()));
+        }
+        
+		System.exit(0);
+		
+	}
+
+	private IWenityModule findModule (String moduleName)
     {
         for (final IWenityModule module : ModuleConfig.getInstalledModules ())
         {
@@ -149,7 +185,7 @@ public class Wenity
 
     private void writeResponseFile (final String data) throws IOException
     {
-    	if( responseFile.equals("-")){
+    	if( responseFile == null || responseFile.isEmpty() || responseFile.equals("-")){
     		System.out.println(data);
     		return ;
     	}

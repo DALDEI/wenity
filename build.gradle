@@ -8,6 +8,13 @@ buildscript {
     classpath "gradle.plugin.edu.sc.seis.gradle:launch4j:2.1.0"
   }
 }
+repositories {
+  jcenter() 
+}
+
+ext {
+ lombokVersion = "1.16.10"
+}
 
 apply plugin: "edu.sc.seis.launch4j"
 apply plugin: 'java'
@@ -16,6 +23,28 @@ apply plugin: 'eclipse'
 apply plugin: 'application'
 apply plugin: 'ivy-publish'
 apply plugin: 'maven-publish'
+
+dependencies {
+  compile group: 'net.sf.jopt-simple', name: 'jopt-simple' , version: '5.0.3'
+  compile "org.projectlombok:lombok:${rootProject.lombokVersion}"
+      compile 'org.apache.logging.log4j:log4j-api:2+'
+    compile 'org.apache.logging.log4j:log4j-core:2+'
+  
+}
+
+ compileJava {
+      sourceCompatibility = 1.8
+      targetCompatibility = 1.8
+  }
+
+  eclipse {
+    classpath {
+        downloadJavadoc = true
+        downloadSources = true
+    }
+  }
+
+
 
 
 mainClassName = 'wenity.Main'

@@ -34,8 +34,6 @@ public final class Constants
 
     public static final String ARGUMENT_SEPARATOR = ",";
 
-    public static final String PARAM_VERBOSE = "-d";    // debug+info
-    public static final String PARAM_INFO = "-i";       // info
 
     public static final String RESPONSE_FILE_NAME = "wenity_response.txt";
 
@@ -63,6 +61,8 @@ public final class Constants
 
     //
     public static final int MB_IN_BYTES = 1024 * 1024;
+
+	public static final String APP_DOCS_URL = "http://kksw.eu/manuals/wenity_manual.html";
 
 
     private Constants ()

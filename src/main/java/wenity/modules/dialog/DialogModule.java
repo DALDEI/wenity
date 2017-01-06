@@ -157,4 +157,11 @@ public class DialogModule extends AWenityModule
         return enumMap;
     }
 
+
+	@Override
+	public String getModuleDescription() {
+		return "show a dialog and return selected button index (1..N)";
+	 
+	}
+
 }

@@ -24,39 +24,22 @@ along with Wenity v1.5.  If not, see <http://www.gnu.org/licenses/>.
 package wenity;
 
 import java.util.Arrays;
+import joptsimple.BuiltinHelpFormatter;
+import joptsimple.OptionException;
+import joptsimple.OptionParser;
+import joptsimple.OptionSet;
+import joptsimple.OptionSpec;
+import joptsimple.OptionSpecBuilder;
+import joptsimple.ValueConversionException;
+import joptsimple.util.KeyValuePair;
 
 public class Main
 {
 
     public static void main (String[] args)
     {
-        if (args.length == 0)
-        {
-            showUsage ();
-            return;
-        }
-
-        // optional parameters
-        if (Constants.PARAM_VERBOSE.equals (args[0]))
-        {
-            Logger.goDebugMode ();
-        }
-//        else
-//            if (Constants.PARAM_INFO.equals (args[0]))
-//            {
-//                Logger.goInfoMode ();
-//            }
-
-        Logger.debug ("Wenity called with arguments: " + Arrays.toString (args));
-
         System.exit (new Wenity ().doIt (args));
     }
 
 
-    private static void showUsage ()
-    {
-        System.err.println (Constants.APP_VERSION);
-        System.err.println ("Usage: [-d] module_name module_parameters");
-        System.err.println ("See documentation for details and examples or visit Wenity on internet at " + Constants.APP_HOME);
-    }
 }

@@ -121,4 +121,9 @@ public class FileSelector extends AWenityModule
         return ModuleResponse.newFileResponse (selFile.getPath ());
     }
 
+	@Override
+	public String getModuleDescription() {
+		 return "show a file selector dialog and return selected file name";
+		 }
+
 }
