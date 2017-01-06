@@ -8,6 +8,9 @@ buildscript {
     classpath "gradle.plugin.edu.sc.seis.gradle:launch4j:2.1.0"
   }
 }
+plugins {
+  id 'com.github.johnrengelman.shadow' version '1.2.4'
+}
 repositories {
   jcenter() 
 }
@@ -21,17 +24,22 @@ apply plugin: 'java'
 apply plugin: "maven"
 apply plugin: 'eclipse'
 apply plugin: 'application'
-apply plugin: 'ivy-publish'
-apply plugin: 'maven-publish'
 
 dependencies {
   compile group: 'net.sf.jopt-simple', name: 'jopt-simple' , version: '5.0.3'
-  compile "org.projectlombok:lombok:${rootProject.lombokVersion}"
+  compileOnly "org.projectlombok:lombok:${rootProject.lombokVersion}"
       compile 'org.apache.logging.log4j:log4j-api:2+'
     compile 'org.apache.logging.log4j:log4j-core:2+'
   
 }
 
+distributions {
+   main {
+     contents {
+       duplicatesStrategy 'EXCLUDE'
+     }
+   }
+}
  compileJava {
       sourceCompatibility = 1.8
       targetCompatibility = 1.8
@@ -89,41 +97,14 @@ test {
 
 task wrapper(type: Wrapper) {
 }
-
+distributions {
+   main {
+     contents {
+       duplicatesStrategy 'EXCLUDE'
+     }
+   }
+}
 compileJava {
     sourceCompatibility = 1.7
     targetCompatibility = 1.7
-}
-
-
-publishing {
-    repositories {
-        ivy {
-            // change to point to your repo, e.g. http://my.org/repo
-            url "${rootProject.buildDir}/_ivy_repo"
-        }
-        maven {
-            // change to point to your repo, e.g. http://my.org/repo
-            url "${rootProject.buildDir}/_maven_repo"
-        }
-    }
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
-            artifact sourceJar {
-                classifier "sources"
-            }
-        }
-        
-        ivyJava(IvyPublication) {
-            from components.java
-            artifact(sourceJar) {
-                type "source"
-                conf "runtime"
-            }
-            descriptor.withXml {
-                asNode().info[0].appendNode('description', description)
-            }
-        }
-    }
 }
